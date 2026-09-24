@@ -9,10 +9,13 @@ if feed.entries:
     latest = feed.entries[0]
     title = latest.title
     link = latest.link
+    
+    # 获取新闻摘要（如果 RSS 里有的话）
+    summary = getattr(latest, 'summary', '暂无详细摘要')
 
-    # 2. 组装发往 Server酱的内容
+    # 2. 组装更丰富的推送内容（包含标题、摘要、原文链接）
     title_msg = "🚨 QQQ 财经快讯"
-    desp_msg = f"**标题**: {title}\n\n[点击查看原文链接]({link})"
+    desp_msg = f"**标题**: {title}\n\n**内容摘要**: {summary}\n\n[点击查看完整原文]({link})"
 
     # 3. 将你的 Server酱 SendKey 填在下方双引号内
     send_key = "SCT427439TtPBYqnM16986TLMZq30QGCIt"
