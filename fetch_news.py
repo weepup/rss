@@ -6,16 +6,22 @@ rss_url = "https://news.google.com/rss/search?q=%28%22QQQ%22+OR+%22Invesco+QQQ%2
 feed = feedparser.parse(rss_url)
 
 if feed.entries:
-    latest = feed.entries[0]
-    title = latest.title
-    link = latest.link
+    # 每次抓取最新的 20 条新闻
+    top_entries = feed.entries[:20]
     
-    # 获取新闻摘要（如果 RSS 里有的话）
-    summary = getattr(latest, 'summary', '暂无详细摘要')
+    message_list = []
+    for i, entry in enumerate(top_entries, 1):
+        title = entry.title
+        link = entry.link
+        summary = getattr(entry, 'summary', '暂无详细摘要')
+        
+        # 组装每条新闻的排版
+        item_text = f"### 📌 动态 {i}\n**标题**: {title}\n\n**摘要**: {summary}\n\n[点击查看原文]({link})\n\n---"
+        message_list.append(item_text)
 
-    # 2. 组装更丰富的推送内容（包含标题、摘要、原文链接）
-    title_msg = "🚨 QQQ 财经快讯"
-    desp_msg = f"**标题**: {title}\n\n**内容摘要**: {summary}\n\n[点击查看完整原文]({link})"
+    # 2. 组装总标题和整体内容
+    title_msg = f"🚨 QQQ 财经快讯（共更新 {len(top_entries)} 条）"
+    desp_msg = "\n".join(message_list)
 
     # 3. 将你的 Server酱 SendKey 填在下方双引号内
     send_key = "SCT427439TtPBYqnM16986TLMZq30QGCIt"
